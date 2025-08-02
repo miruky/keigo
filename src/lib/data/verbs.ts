@@ -1,0 +1,47 @@
+import type { VerbEntry } from '../types';
+
+// 敬語の指針(文化審議会答申)で一般的とされる語形を中心に収録。
+// 最初の語形を代表形としてドリルの正解に使う。
+export const verbs: VerbEntry[] = [
+  { plain: '言う', respectful: ['おっしゃる'], humble: ['申し上げる', '申す'] },
+  {
+    plain: '行く',
+    respectful: ['いらっしゃる', 'おいでになる'],
+    humble: ['伺う', '参る'],
+    note: '「参る」は丁重語として聞き手への改まりにも使う',
+  },
+  {
+    plain: '来る',
+    respectful: ['いらっしゃる', 'おいでになる', 'お越しになる', '見える'],
+    humble: ['参る', '伺う'],
+  },
+  { plain: 'いる', respectful: ['いらっしゃる'], humble: ['おる'] },
+  { plain: 'する', respectful: ['なさる'], humble: ['いたす'] },
+  { plain: '食べる', respectful: ['召し上がる'], humble: ['いただく'] },
+  { plain: '飲む', respectful: ['召し上がる'], humble: ['いただく'] },
+  { plain: '見る', respectful: ['ご覧になる'], humble: ['拝見する'] },
+  { plain: '聞く', respectful: ['お聞きになる'], humble: ['伺う', '拝聴する'] },
+  { plain: '会う', respectful: ['お会いになる'], humble: ['お目にかかる'] },
+  {
+    plain: '知っている',
+    respectful: ['ご存じだ'],
+    humble: ['存じている', '存じ上げている'],
+    note: '対象が人なら「存じ上げる」、物事なら「存じる」',
+  },
+  { plain: '思う', respectful: ['お思いになる'], humble: ['存じる'] },
+  { plain: 'もらう', respectful: ['お受け取りになる'], humble: ['いただく', '頂戴する'] },
+  { plain: 'あげる', respectful: [], humble: ['差し上げる'] },
+  { plain: 'くれる', respectful: ['くださる'], humble: [] },
+  { plain: '読む', respectful: ['お読みになる'], humble: ['拝読する'] },
+  { plain: '借りる', respectful: ['お借りになる'], humble: ['拝借する'] },
+  { plain: '伝える', respectful: ['お伝えになる'], humble: ['申し伝える'] },
+  { plain: '訪ねる', respectful: ['お訪ねになる'], humble: ['伺う', '参上する'] },
+  { plain: '着る', respectful: ['お召しになる'], humble: [] },
+  { plain: '寝る', respectful: ['お休みになる'], humble: [] },
+  { plain: '死ぬ', respectful: ['お亡くなりになる'], humble: [] },
+  { plain: '買う', respectful: ['お求めになる', 'お買い上げになる'], humble: [] },
+  { plain: '見せる', respectful: [], humble: ['お目にかける', 'ご覧に入れる'] },
+  { plain: '帰る', respectful: ['お帰りになる'], humble: ['おいとまする'] },
+];
+
+export const FORM_LABELS = { respectful: '尊敬語', humble: '謙譲語' } as const;
