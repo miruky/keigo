@@ -19,6 +19,8 @@ const STORAGE_KEY = 'keigo-progress';
 const stage = document.getElementById('stage')!;
 const accuracyEl = document.getElementById('score-accuracy')!;
 const streakEl = document.getElementById('score-streak')!;
+const meterEl = document.getElementById('meter')!;
+const meterFill = document.getElementById('meter-fill')!;
 const tabs = [...document.querySelectorAll<HTMLButtonElement>('.tab')];
 
 const rng = createRng(Date.now() >>> 0);
@@ -35,9 +37,13 @@ function escapeHtml(s: string): string {
 }
 
 function updateScoreboard(): void {
-  const pct = progress.total === 0 ? '--' : (accuracy(progress) * 100).toFixed(0);
+  const ratio = accuracy(progress);
+  const pct = progress.total === 0 ? '--' : (ratio * 100).toFixed(0);
   accuracyEl.textContent = `正答率 ${pct}%(${progress.correct}/${progress.total})`;
   streakEl.textContent = `連続 ${progress.streak}(最高 ${progress.bestStreak})`;
+  const filled = progress.total === 0 ? 0 : Math.round(ratio * 100);
+  meterFill.style.width = `${filled}%`;
+  meterEl.setAttribute('aria-valuenow', String(filled));
 }
 
 function saveProgress(): void {
@@ -87,7 +93,8 @@ function renderQuestion(): void {
     const buttons = current.choices
       .map(
         (choice, i) =>
-          `<button class="choice" type="button" data-index="${i}">${escapeHtml(choice)}</button>`,
+          `<button class="choice" type="button" data-index="${i}" style="--i:${i}">` +
+          `${escapeHtml(choice)}</button>`,
       )
       .join('');
     stage.innerHTML =
@@ -103,8 +110,9 @@ function renderQuestion(): void {
       `<p class="question-type">誤用判定</p>` +
       `<h2 class="question sentence">${escapeHtml(current.sentence)}</h2>` +
       `<p class="hint">この敬語の使い方は適切?</p>` +
-      `<div class="choices judge"><button class="choice" type="button" data-judge="ok">適切</button>` +
-      `<button class="choice" type="button" data-judge="ng">不適切</button></div>` +
+      `<div class="choices judge">` +
+      `<button class="choice" type="button" data-judge="ok" style="--i:0">適切</button>` +
+      `<button class="choice" type="button" data-judge="ng" style="--i:1">不適切</button></div>` +
       `<div id="feedback" class="feedback" aria-live="polite"></div>` +
       `</section>`;
   }
