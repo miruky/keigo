@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="keigo ロゴ">
+  <title>keigo</title>
+  <g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 44c8-2 14-8 16-16"/>
+    <path d="M18 18h26"/>
+    <path d="M31 11v7"/>
+    <path d="M42 26c-2 13-9 21-19 25"/>
+    <path d="M27 30c4 9 11 17 21 19"/>
+  </g>
+  <text x="76" y="44" font-family="'Hiragino Sans','Noto Sans JP',system-ui,sans-serif" font-size="34" font-weight="600" letter-spacing="2" fill="currentColor">keigo</text>
+</svg>
