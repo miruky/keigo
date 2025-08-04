@@ -138,4 +138,43 @@ export const misuseItems: MisuseItem[] = [
     ok: true,
     note: '本来は「とんでもない」で一語だが、敬語の指針では感謝・謙遜の応答として許容されている。',
   },
+  {
+    id: 'humble-okaeshi-kudasai',
+    sentence: '恐れ入りますが、お名前をお書きしてください。',
+    ok: false,
+    fix: '恐れ入りますが、お名前をお書きください。',
+    note: '「お書きする」は自分がへりくだる形。相手への依頼は「お書きください」。',
+  },
+  {
+    id: 'double-okaeri-narareru',
+    sentence: '部長はもうお帰りになられました。',
+    ok: false,
+    fix: '部長はもうお帰りになりました。',
+    note: '「お帰りになる」に「られる」を重ねた二重敬語。',
+  },
+  {
+    id: 'humble-haishaku-aite',
+    sentence: 'よろしければ拝借されますか。',
+    ok: false,
+    fix: 'よろしければお使いになりますか。',
+    note: '「拝借する」は自分がへりくだる形。相手の動作に「される」を付けても尊敬にならない。',
+  },
+  {
+    id: 'sonkei-ikaga',
+    sentence: 'コーヒーはいかがなさいますか。',
+    ok: true,
+    note: '「なさる」は「する」の尊敬語。相手の動作を立てる適切な形。',
+  },
+  {
+    id: 'humble-osewa-orimasu',
+    sentence: '父は今、出かけております。',
+    ok: true,
+    note: '身内の動作を丁重語「おる」で低めて述べた適切な形。',
+  },
+  {
+    id: 'goannai-itashimasu',
+    sentence: '会場へご案内させていただきます。',
+    ok: true,
+    note: '自分の動作を謙譲語「ご~する/させていただく」で述べた適切な形。',
+  },
 ];
