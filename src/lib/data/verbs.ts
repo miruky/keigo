@@ -50,6 +50,16 @@ export const verbs: VerbEntry[] = [
   { plain: '使う', respectful: ['お使いになる'], humble: [] },
   { plain: '送る', respectful: ['お送りになる'], humble: ['お送りする'] },
   { plain: '渡す', respectful: ['お渡しになる'], humble: ['お渡しする'] },
+  {
+    plain: '尋ねる',
+    respectful: ['お尋ねになる'],
+    humble: ['お尋ねする', '伺う'],
+    note: '「伺う」は問う・訪れる・聞くの謙譲語として広く使う',
+  },
+  { plain: '断る', respectful: ['お断りになる'], humble: ['お断りする', '辞退する'] },
+  { plain: '預かる', respectful: ['お預かりになる'], humble: ['お預かりする'] },
+  { plain: '出す', respectful: ['お出しになる'], humble: ['お出しする'] },
+  { plain: '呼ぶ', respectful: ['お呼びになる'], humble: ['お呼びする'] },
 ];
 
 export const FORM_LABELS = { respectful: '尊敬語', humble: '謙譲語' } as const;

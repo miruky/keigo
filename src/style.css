@@ -65,9 +65,18 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'palt' 1;
+  text-rendering: optimizeLegibility;
   transition:
     background-color 0.4s ease,
     color 0.4s ease;
+}
+
+/* 見出し・選択肢の和文は詰めず、ベタ組みで読みやすさを優先する */
+.question,
+.choice,
+.sentence {
+  font-feature-settings: normal;
 }
 
 /* ---- ヘッダー ---- */
