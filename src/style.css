@@ -308,6 +308,24 @@ body {
   opacity: 0.5;
 }
 
+/* ---- キーボードのヒント ---- */
+
+.kbd-hint {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+
+kbd {
+  font-family: var(--sans);
+  font-size: 11px;
+  padding: 1px 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  color: var(--ink-2);
+}
+
 /* ---- フィードバック ---- */
 
 .feedback:not(:empty) {
@@ -318,10 +336,26 @@ body {
 }
 
 .verdict {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--serif);
   font-size: 19px;
   font-weight: 600;
   margin-bottom: 10px;
+}
+
+.verdict-mark {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.btn-kbd {
+  margin-left: 10px;
+  font-size: 11px;
+  opacity: 0.7;
+  font-weight: 500;
 }
 
 .verdict.is-ok {
@@ -495,6 +529,43 @@ td:last-child {
   color: var(--ink-3);
   font-size: 12px;
   line-height: 1.7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.app-footer p {
+  max-width: 60ch;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 18px;
+  flex: none;
+}
+
+.link-button {
+  font: inherit;
+  font-size: 12px;
+  border: none;
+  background: none;
+  color: var(--ink-2);
+  cursor: pointer;
+  padding: 0;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition:
+    background-size 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.2s ease;
+}
+
+.link-button:hover {
+  color: var(--accent);
+  background-size: 100% 1px;
 }
 
 /* ---- テーマアイコン ---- */
