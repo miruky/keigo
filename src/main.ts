@@ -225,14 +225,31 @@ function setMode(next: typeof mode): void {
     const active = tab.dataset.mode === next;
     tab.classList.toggle('is-active', active);
     tab.setAttribute('aria-selected', String(active));
+    // ARIAのタブパターン: アクティブだけをTab移動の対象にする
+    tab.tabIndex = active ? 0 : -1;
   }
   if (mode === 'list') renderList();
   else renderQuestion();
 }
 
-for (const tab of tabs) {
+tabs.forEach((tab, i) => {
   tab.addEventListener('click', () => setMode(tab.dataset.mode as typeof mode));
-}
+  // 左右矢印・Home/Endでタブを移動する(role=tablistの作法)
+  tab.addEventListener('keydown', (e) => {
+    let to = -1;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') to = (i + 1) % tabs.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') to = (i - 1 + tabs.length) % tabs.length;
+    else if (e.key === 'Home') to = 0;
+    else if (e.key === 'End') to = tabs.length - 1;
+    else return;
+    e.preventDefault();
+    const target = tabs[to];
+    if (target) {
+      target.focus();
+      setMode(target.dataset.mode as typeof mode);
+    }
+  });
+});
 
 // ---- 配色テーマ ----
 
