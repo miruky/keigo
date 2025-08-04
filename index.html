@@ -9,6 +9,16 @@
     />
     <title>keigo - 敬語変換トレーニング</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // 明示的にライト/ダークを選んでいる場合は描画前に適用し、初回フラッシュを防ぐ。
+      // 未選択(自動)のときは data-theme を付けず、CSSのprefers-color-schemeに任せる。
+      (function () {
+        try {
+          var t = localStorage.getItem('keigo-theme');
+          if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <header class="app-header">
