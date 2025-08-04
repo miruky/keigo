@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { accuracy, deserialize, emptyProgress, record, serialize, weakIds } from './progress';
+import {
+  accuracy,
+  deserialize,
+  emptyProgress,
+  record,
+  serialize,
+  weakBreakdown,
+  weakIds,
+} from './progress';
 
 describe('record', () => {
   it('正答と誤答を集計し、連続正解を数える', () => {
@@ -32,6 +40,20 @@ describe('record', () => {
     record(before, 'a', false);
     expect(before.total).toBe(0);
     expect(before.wrong).toEqual({});
+  });
+});
+
+describe('weakBreakdown', () => {
+  it('苦手idを接頭辞で変換ドリルと誤用判定に振り分ける', () => {
+    let p = emptyProgress();
+    p = record(p, 'c:言う:humble', false);
+    p = record(p, 'c:見る:humble', false);
+    p = record(p, 'm:double-goran', false);
+    expect(weakBreakdown(p)).toEqual({ conversion: 2, misuse: 1 });
+  });
+
+  it('苦手がなければ両方0', () => {
+    expect(weakBreakdown(emptyProgress())).toEqual({ conversion: 0, misuse: 0 });
   });
 });
 
