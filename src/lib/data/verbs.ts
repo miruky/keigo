@@ -42,6 +42,14 @@ export const verbs: VerbEntry[] = [
   { plain: '買う', respectful: ['お求めになる', 'お買い上げになる'], humble: [] },
   { plain: '見せる', respectful: [], humble: ['お目にかける', 'ご覧に入れる'] },
   { plain: '帰る', respectful: ['お帰りになる'], humble: ['おいとまする'] },
+  { plain: '待つ', respectful: ['お待ちになる'], humble: ['お待ちする'] },
+  { plain: '書く', respectful: ['お書きになる'], humble: [] },
+  { plain: '持つ', respectful: ['お持ちになる'], humble: ['お持ちする'] },
+  { plain: '考える', respectful: ['お考えになる'], humble: ['存じる'] },
+  { plain: '教える', respectful: ['お教えになる'], humble: ['お教えする'] },
+  { plain: '使う', respectful: ['お使いになる'], humble: [] },
+  { plain: '送る', respectful: ['お送りになる'], humble: ['お送りする'] },
+  { plain: '渡す', respectful: ['お渡しになる'], humble: ['お渡しする'] },
 ];
 
 export const FORM_LABELS = { respectful: '尊敬語', humble: '謙譲語' } as const;
