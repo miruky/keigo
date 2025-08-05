@@ -60,20 +60,36 @@ export function serialize(progress: Progress): string {
   return JSON.stringify({ version: 1, ...progress });
 }
 
-/** 壊れた保存データはまっさらな成績に戻す */
-export function deserialize(json: string | null): Progress {
-  if (!json) return emptyProgress();
+/**
+ * 保存・書き出しデータを厳密にProgressへ復元する。形式が壊れていれば null。
+ * 読み込み機能では「壊れたファイルで成績を消してしまう」のを避けるため、
+ * 空成績へのフォールバック(deserialize)と区別してこちらを使う。
+ */
+export function parseProgress(json: string | null): Progress | null {
+  if (!json) return null;
+  let data: (Partial<Progress> & { version?: number }) | null;
   try {
-    const data = JSON.parse(json) as Partial<Progress> & { version?: number };
-    if (data.version !== 1 || typeof data.total !== 'number') return emptyProgress();
-    return {
-      total: data.total,
-      correct: data.correct ?? 0,
-      streak: data.streak ?? 0,
-      bestStreak: data.bestStreak ?? 0,
-      wrong: data.wrong ?? {},
-    };
+    data = JSON.parse(json) as Partial<Progress> & { version?: number };
   } catch {
-    return emptyProgress();
+    return null;
   }
+  if (!data || data.version !== 1 || typeof data.total !== 'number') return null;
+  const wrong: Record<string, number> = {};
+  if (data.wrong && typeof data.wrong === 'object') {
+    for (const [id, count] of Object.entries(data.wrong)) {
+      if (typeof count === 'number' && count > 0) wrong[id] = count;
+    }
+  }
+  return {
+    total: data.total,
+    correct: typeof data.correct === 'number' ? data.correct : 0,
+    streak: typeof data.streak === 'number' ? data.streak : 0,
+    bestStreak: typeof data.bestStreak === 'number' ? data.bestStreak : 0,
+    wrong,
+  };
+}
+
+/** localStorageの読み込み用。壊れた保存データはまっさらな成績に戻す。 */
+export function deserialize(json: string | null): Progress {
+  return parseProgress(json) ?? emptyProgress();
 }
