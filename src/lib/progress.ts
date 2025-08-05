@@ -45,6 +45,17 @@ export function weakIds(progress: Progress): string[] {
   return Object.keys(progress.wrong);
 }
 
+/** 苦手の内訳。idの接頭辞(c:=変換ドリル, m:=誤用判定)で数える */
+export function weakBreakdown(progress: Progress): { conversion: number; misuse: number } {
+  let conversion = 0;
+  let misuse = 0;
+  for (const id of Object.keys(progress.wrong)) {
+    if (id.startsWith('c:')) conversion += 1;
+    else if (id.startsWith('m:')) misuse += 1;
+  }
+  return { conversion, misuse };
+}
+
 export function serialize(progress: Progress): string {
   return JSON.stringify({ version: 1, ...progress });
 }

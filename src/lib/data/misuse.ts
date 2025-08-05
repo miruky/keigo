@@ -177,4 +177,38 @@ export const misuseItems: MisuseItem[] = [
     ok: true,
     note: '自分の動作を謙譲語「ご~する/させていただく」で述べた適切な形。',
   },
+  {
+    id: 'sairure-yomasasete',
+    sentence: '本日は休まさせていただきます。',
+    ok: false,
+    fix: '本日は休ませていただきます。',
+    note: 'さ入れ言葉。五段動詞「休む」の使役は「休ませる」。不要な「さ」を入れない。',
+  },
+  {
+    id: 'baito-no-hou',
+    sentence: 'お料理のほうをお持ちしました。',
+    ok: false,
+    fix: 'お料理をお持ちしました。',
+    note: '「~のほう」は方向や対比でない場面では冗長。いわゆるバイト敬語。',
+  },
+  {
+    id: 'baito-ni-narimasu',
+    sentence: 'こちらがレシートになります。',
+    ok: false,
+    fix: 'こちらがレシートでございます。',
+    note: '「~になる」は変化を表す。物を指し示す場面では「~でございます」が適切。',
+  },
+  {
+    id: 'double-haiken-sasete',
+    sentence: '資料を拝見させていただきました。',
+    ok: false,
+    fix: '資料を拝見いたしました。',
+    note: '「拝見する」が既に謙譲語。「させていただく」を重ねると回りくどい。',
+  },
+  {
+    id: 'ok-onamae-ukagau',
+    sentence: '恐れ入りますが、お名前を伺ってもよろしいでしょうか。',
+    ok: true,
+    note: 'クッション言葉に「伺う」を添え、自分が問う動作を謙譲にした適切な依頼。',
+  },
 ];

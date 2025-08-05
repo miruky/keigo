@@ -13,6 +13,7 @@ import {
   record,
   serialize,
   verbs,
+  weakBreakdown,
   weakIds,
 } from './lib';
 import type { KeigoForm, Question } from './lib';
@@ -39,12 +40,38 @@ function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
+const reduceMotion =
+  typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+let scoreboardShown = false;
+
+function setAccuracyText(pct: number | string): void {
+  accuracyEl.textContent = `正答率 ${pct}%(${progress.correct}/${progress.total})`;
+}
+
+/** 読み込み時だけ、保存済みの正答率を0から数え上げて見せる */
+function countUpAccuracy(target: number): void {
+  const start = performance.now();
+  const step = (now: number): void => {
+    const t = Math.min(1, (now - start) / 650);
+    const eased = 1 - Math.pow(1 - t, 3);
+    setAccuracyText(Math.round(target * eased));
+    if (t < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
 function updateScoreboard(): void {
   const ratio = accuracy(progress);
-  const pct = progress.total === 0 ? '--' : (ratio * 100).toFixed(0);
-  accuracyEl.textContent = `正答率 ${pct}%(${progress.correct}/${progress.total})`;
-  streakEl.textContent = `連続 ${progress.streak}(最高 ${progress.bestStreak})`;
   const filled = progress.total === 0 ? 0 : Math.round(ratio * 100);
+  if (progress.total === 0) {
+    setAccuracyText('--');
+  } else if (!scoreboardShown && !reduceMotion) {
+    countUpAccuracy(filled);
+  } else {
+    setAccuracyText(filled);
+  }
+  scoreboardShown = true;
+  streakEl.textContent = `連続 ${progress.streak}(最高 ${progress.bestStreak})`;
   meterFill.style.width = `${filled}%`;
   meterEl.setAttribute('aria-valuenow', String(filled));
 }
@@ -84,6 +111,18 @@ function nextQuestionFresh(): Question {
   return rng() < 0.5 ? buildConversionQuestion(verbs, rng) : buildMisuseQuestion(misuseItems, rng);
 }
 
+/** 苦手復習モードでだけ、残りの苦手の内訳を1行で示す */
+function reviewSummaryHtml(): string {
+  if (mode !== 'review') return '';
+  const { conversion, misuse } = weakBreakdown(progress);
+  const total = conversion + misuse;
+  if (total === 0) return '';
+  return (
+    `<p class="review-summary">苦手 残り ${total}件` +
+    `<span class="review-split">変換 ${conversion} / 誤用 ${misuse}</span></p>`
+  );
+}
+
 function renderQuestion(): void {
   current = nextQuestion();
   if (!current) {
@@ -92,6 +131,7 @@ function renderQuestion(): void {
       `<p class="hint">ドリルや誤用判定で間違えた問題がここに溜まり、正解すると消えます。</p></section>`;
     return;
   }
+  const summary = reviewSummaryHtml();
   if (current.kind === 'conversion') {
     const buttons = current.choices
       .map(
@@ -101,6 +141,7 @@ function renderQuestion(): void {
       )
       .join('');
     stage.innerHTML =
+      summary +
       `<section class="card question-card">` +
       `<p class="question-type">変換ドリル</p>` +
       `<h2 class="question">「${escapeHtml(current.plain)}」の${FORM_LABELS[current.form]}は?</h2>` +
@@ -110,6 +151,7 @@ function renderQuestion(): void {
       `</section>`;
   } else {
     stage.innerHTML =
+      summary +
       `<section class="card question-card">` +
       `<p class="question-type">誤用判定</p>` +
       `<h2 class="question sentence">${escapeHtml(current.sentence)}</h2>` +
