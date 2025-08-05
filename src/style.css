@@ -517,6 +517,22 @@ td:last-child {
   line-height: 1.7;
 }
 
+/* 苦手復習の内訳。出題の上に小さく置く */
+.review-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 24px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.review-split {
+  color: var(--ink-2);
+}
+
 .empty-card {
   max-width: 480px;
 }
