@@ -3,6 +3,7 @@ import {
   accuracy,
   deserialize,
   emptyProgress,
+  parseProgress,
   record,
   serialize,
   weakBreakdown,
@@ -69,5 +70,30 @@ describe('serialize / deserialize', () => {
     expect(deserialize(null)).toEqual(emptyProgress());
     expect(deserialize('{broken')).toEqual(emptyProgress());
     expect(deserialize('{"version":99,"total":5}')).toEqual(emptyProgress());
+  });
+});
+
+describe('parseProgress', () => {
+  it('正しい成績はそのまま復元する', () => {
+    let p = emptyProgress();
+    p = record(p, 'a', false);
+    p = record(p, 'b', true);
+    expect(parseProgress(serialize(p))).toEqual(p);
+  });
+
+  it('壊れたファイルや未知のバージョンはnullを返す(空成績で上書きしない)', () => {
+    expect(parseProgress(null)).toBeNull();
+    expect(parseProgress('')).toBeNull();
+    expect(parseProgress('{broken')).toBeNull();
+    expect(parseProgress('{"version":99,"total":5}')).toBeNull();
+    expect(parseProgress('{"version":1}')).toBeNull();
+    expect(parseProgress('null')).toBeNull();
+  });
+
+  it('苦手カウントの不正値(0以下・非数値)は捨てる', () => {
+    const json =
+      '{"version":1,"total":3,"correct":1,"streak":0,"bestStreak":2,' +
+      '"wrong":{"a":2,"b":0,"c":-1,"d":"x"}}';
+    expect(parseProgress(json)?.wrong).toEqual({ a: 2 });
   });
 });
