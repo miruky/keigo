@@ -8,10 +8,12 @@ export {
   shuffle,
 } from './quiz';
 export { choiceIndexFromKey, isAdvanceKey } from './keys';
+export { filterMisuse, filterVerbs, normalizeQuery } from './search';
 export {
   accuracy,
   deserialize,
   emptyProgress,
+  parseProgress,
   record,
   serialize,
   weakBreakdown,
