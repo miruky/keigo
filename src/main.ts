@@ -8,8 +8,11 @@ import {
   createRng,
   deserialize,
   emptyProgress,
+  filterMisuse,
+  filterVerbs,
   isAdvanceKey,
   misuseItems,
+  parseProgress,
   record,
   serialize,
   verbs,
@@ -233,30 +236,74 @@ document.addEventListener('keydown', (e) => {
 
 // ---- 対照表 ----
 
+// 対照表の絞り込み語。モードを離れても保持し、戻ったときに復元する。
+let listQuery = '';
+const misuseEntries = misuseItems.filter((item) => !item.ok);
+
 function renderList(): void {
-  const rows = verbs
-    .map(
-      (verb) =>
-        `<tr><th scope="row">${escapeHtml(verb.plain)}</th>` +
-        `<td>${escapeHtml(verb.respectful.join('・') || 'なし')}</td>` +
-        `<td>${escapeHtml(verb.humble.join('・') || 'なし')}</td>` +
-        `<td>${escapeHtml(verb.note ?? '')}</td></tr>`,
-    )
-    .join('');
-  const misuse = misuseItems
-    .filter((item) => !item.ok)
-    .map(
-      (item) =>
-        `<li><span class="ng-sentence">${escapeHtml(item.sentence)}</span>` +
-        `<span class="ok-sentence">${escapeHtml(item.fix!)}</span>` +
-        `<span class="misuse-note">${escapeHtml(item.note)}</span></li>`,
-    )
-    .join('');
   stage.innerHTML =
-    `<section class="card list-card"><h2>動詞の敬語対照表</h2>` +
-    `<div class="table-wrap"><table><thead><tr><th>動詞</th><th>尊敬語</th><th>謙譲語</th><th>補足</th></tr></thead>` +
-    `<tbody>${rows}</tbody></table></div></section>` +
-    `<section class="card list-card"><h2>よくある誤用と言い換え</h2><ul class="misuse-list">${misuse}</ul></section>`;
+    `<section class="list-head">` +
+    `<p class="kicker">対照と誤用</p>` +
+    `<h2 class="list-title">敬語の早見表</h2>` +
+    `<p class="list-lead">尊敬語と謙譲語の対照、ビジネス・接客で頻出の誤用と言い換えをまとめている。語形でも解説の語でも絞り込める。</p>` +
+    `<div class="list-search">` +
+    `<svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>` +
+    `<input id="list-filter" class="search-input" type="search" autocomplete="off" placeholder="語・敬語・誤用で絞り込む" aria-label="対照表を絞り込む" value="${escapeHtml(listQuery)}" />` +
+    `</div>` +
+    `</section>` +
+    `<div id="list-results"></div>`;
+  const input = document.getElementById('list-filter') as HTMLInputElement;
+  input.addEventListener('input', () => {
+    listQuery = input.value;
+    renderListResults();
+  });
+  renderListResults();
+}
+
+/** 検索語に応じて対照表と誤用一覧を描き直す(入力ごとに呼ぶので軽く保つ) */
+function renderListResults(): void {
+  const results = document.getElementById('list-results');
+  if (!results) return;
+  const vs = filterVerbs(verbs, listQuery);
+  const ms = filterMisuse(misuseEntries, listQuery);
+
+  if (vs.length === 0 && ms.length === 0) {
+    results.innerHTML = `<p class="list-empty">「${escapeHtml(listQuery.trim())}」に一致する語・誤用はありません。</p>`;
+    return;
+  }
+
+  const verbSection = vs.length
+    ? `<section class="list-card"><h3 class="list-section">動詞の敬語対照表` +
+      `<span class="count">${vs.length}語</span></h3>` +
+      `<div class="table-wrap"><table><thead><tr><th>動詞</th><th>尊敬語</th><th>謙譲語</th><th>補足</th></tr></thead>` +
+      `<tbody>` +
+      vs
+        .map(
+          (verb) =>
+            `<tr><th scope="row">${escapeHtml(verb.plain)}</th>` +
+            `<td>${escapeHtml(verb.respectful.join('・') || 'なし')}</td>` +
+            `<td>${escapeHtml(verb.humble.join('・') || 'なし')}</td>` +
+            `<td>${escapeHtml(verb.note ?? '')}</td></tr>`,
+        )
+        .join('') +
+      `</tbody></table></div></section>`
+    : '';
+
+  const misuseSection = ms.length
+    ? `<section class="list-card"><h3 class="list-section">よくある誤用と言い換え` +
+      `<span class="count">${ms.length}件</span></h3><ul class="misuse-list">` +
+      ms
+        .map(
+          (item) =>
+            `<li><span class="ng-sentence">${escapeHtml(item.sentence)}</span>` +
+            `<span class="ok-sentence">${escapeHtml(item.fix!)}</span>` +
+            `<span class="misuse-note">${escapeHtml(item.note)}</span></li>`,
+        )
+        .join('') +
+      `</ul></section>`
+    : '';
+
+  results.innerHTML = verbSection + misuseSection;
 }
 
 // ---- モード切替 ----
@@ -327,6 +374,31 @@ document.getElementById('export-progress')!.addEventListener('click', () => {
   link.download = 'keigo-progress.json';
   link.click();
   URL.revokeObjectURL(url);
+});
+
+const importFile = document.getElementById('import-file') as HTMLInputElement;
+document.getElementById('import-progress')!.addEventListener('click', () => importFile.click());
+importFile.addEventListener('change', async () => {
+  const file = importFile.files?.[0];
+  importFile.value = ''; // 同じファイルを選び直せるよう毎回クリアする
+  if (!file) return;
+  const loaded = parseProgress(await file.text());
+  if (!loaded) {
+    alert('成績ファイルを読み込めませんでした。書き出した keigo-progress.json を選んでください。');
+    return;
+  }
+  if (
+    progress.total > 0 &&
+    !confirm('読み込むと、いまの成績と苦手リストを置き換えます。よろしいですか?')
+  ) {
+    return;
+  }
+  progress = loaded;
+  saveProgress();
+  scoreboardShown = true; // 読み込み直後にカウントアップ演出は出さない
+  updateScoreboard();
+  if (mode === 'list') renderList();
+  else renderQuestion();
 });
 
 document.getElementById('reset-progress')!.addEventListener('click', () => {
