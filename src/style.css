@@ -224,7 +224,7 @@ body {
 }
 
 /* 対照表は内容が長いので上揃え(縦中央だと読み始めが下がる) */
-.app-main:has(.list-card) {
+.app-main:has(.list-head) {
   justify-content: flex-start;
 }
 
@@ -437,13 +437,118 @@ kbd {
 
 /* ---- 対照表 ---- */
 
-.list-card h2 {
+.list-head {
+  max-width: 640px;
+  animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.kicker {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.list-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(28px, 4.4vw, 38px);
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+
+.list-lead {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--ink-2);
+  max-width: 54ch;
+}
+
+.list-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line-strong);
+  max-width: 420px;
+  transition: border-color 0.25s ease;
+}
+
+.list-search:focus-within {
+  border-color: var(--accent);
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--ink-3);
+  transition: color 0.25s ease;
+}
+
+.list-search:focus-within .search-icon {
+  color: var(--accent);
+}
+
+.search-input {
+  flex: 1;
+  font: inherit;
+  font-size: 15px;
+  border: none;
+  background: none;
+  color: var(--ink);
+  padding: 2px 0;
+}
+
+.search-input::placeholder {
+  color: var(--ink-3);
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+/* type=search の既定クリアボタンが地色に合わないので隠す */
+.search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#list-results {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+.list-section {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
   font-family: var(--serif);
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 18px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--line-strong);
+}
+
+.count {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.list-empty {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ink-2);
+  padding: 8px 0;
 }
 
 .table-wrap {
